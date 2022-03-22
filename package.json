@@ -1,0 +1,23 @@
+{
+  "name": "algorithm-data-structure",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keiracle/algorithm-data-structure.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keiracle/algorithm-data-structure/issues"
+  },
+  "homepage": "https://github.com/keiracle/algorithm-data-structure#readme",
+  "dependencies": {
+    "ts-node": "^10.7.0"
+  }
+}
