@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx jest"
   },
   "repository": {
     "type": "git",
@@ -17,7 +17,15 @@
     "url": "https://github.com/keiracle/algorithm-data-structure/issues"
   },
   "homepage": "https://github.com/keiracle/algorithm-data-structure#readme",
-  "dependencies": {
-    "ts-node": "^10.7.0"
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.21.5",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^20.2.1",
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }
