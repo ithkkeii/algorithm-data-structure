@@ -1,176 +1,100 @@
-export class Heap {
-  private items: number[] = [...Array(10).keys()].map(() => 0);
-  private size: number = 0;
+export class MinHeap {
+  public length: number;
+  private data: number[];
 
-  remove() {
-    if (this.isEmpty()) throw new Error('Heap is empty');
-
-    const removedItem = this.items[0];
-
-    this.items[0] = this.items[this.size - 1];
-    this.size -= 1;
-
-    this.bubbleDown();
-
-    return removedItem;
+  constructor() {
+    this.length = 0;
+    this.data = [];
   }
 
-  private bubbleDown() {
-    let index = 0;
-    while (index <= this.size && !this.isValidParent(index)) {
-      const largerChildIndex = this.largerChildIndex(index);
-      this.swap(index, largerChildIndex);
-
-      index = largerChildIndex;
-    }
-  }
-
-  private largerChildIndex(index: number) {
-    // we always fill tree left to right
-    if (!this.hasLeftChild(index)) return index;
-
-    if (!this.hasRightChild(index)) return this.getLeftChildIndex(index);
-
-    return this.leftChild(index) > this.rightChild(index)
-      ? this.getLeftChildIndex(index)
-      : this.getRightChildIndex(index);
-  }
-
-  private hasLeftChild(index: number) {
-    return this.getLeftChildIndex(index) < this.size;
-  }
-
-  private hasRightChild(index: number) {
-    return this.getRightChildIndex(index) < this.size;
-  }
-
-  private isValidParent(index: number) {
-    if (!this.hasLeftChild(index)) return true;
-
-    let isValid = this.items[index] >= this.leftChild(index);
-
-    if (this.hasRightChild(index))
-      isValid &&= this.items[index] >= this.rightChild(index);
-
-    return isValid;
-  }
-
-  private leftChild(index: number) {
-    return this.items[this.getLeftChildIndex(index)];
-  }
-
-  private rightChild(index: number) {
-    return this.items[this.getRightChildIndex(index)];
-  }
-
-  private getLeftChildIndex(position: number) {
-    return position * 2 + 1;
-  }
-
-  private getRightChildIndex(position: number) {
-    return position * 2 + 2;
+  getData(): number[] {
+    return this.data.filter((_, idx) => idx < this.length);
   }
 
   insert(value: number) {
-    if (this.isFull()) throw new Error('Heap overflow');
+    this.data[this.length] = value;
+    this.heapifyUp(this.length);
 
-    this.items[this.size] = value;
-    this.size += 1;
-
-    this.bubbleUp();
+    this.length += 1;
   }
 
-  private bubbleUp() {
-    let index = this.size - 1;
-    let parentIndex = this.getParentIndex(index);
-    while (index > 0 && this.items[index] > this.items[parentIndex]) {
-      this.swap(index, parentIndex);
+  delete(): number {
+    if (this.length === 0) {
+      return -1;
+    }
 
-      // reset index
-      index = parentIndex;
-      parentIndex = this.getParentIndex(index);
+    const headV = this.data[0];
+
+    if (this.length === 1) {
+      this.data = [];
+      this.length -= 1;
+      return headV;
+    }
+
+    // Move last item into head & heapify it down
+    const lastV = this.data[this.length - 1];
+    this.data[0] = lastV;
+    this.length -= 1;
+    this.heapifyDown(0);
+
+    return headV;
+  }
+
+  private heapifyDown(idx: number): void {
+    const lIdx = this.childLeft(idx);
+    const rIdx = this.childRight(idx);
+
+    const v = this.data[idx];
+    const lV = this.data[lIdx];
+    const rV = this.data[rIdx];
+
+    if (idx >= this.length || lIdx >= this.length) {
+      return;
+    }
+
+    if (lV < rV && v < lV) {
+      this.data[lIdx] = v;
+      this.data[idx] = lV;
+
+      this.heapifyDown(lIdx);
+      return;
+    }
+
+    if (rV < lV && v < rV) {
+      this.data[rIdx] = v;
+      this.data[idx] = rV;
+
+      this.heapifyDown(rIdx);
+      return;
     }
   }
 
-  private getParentIndex(position: number) {
-    return Math.floor((position - 1) / 2);
+  private heapifyUp(idx: number): void {
+    if (idx === 0) {
+      return;
+    }
+
+    const pIdx = this.parent(idx);
+    const pValue = this.data[pIdx];
+    const value = this.data[idx];
+
+    if (pValue > value) {
+      this.data[idx] = pValue;
+      this.data[pIdx] = value;
+
+      this.heapifyUp(pIdx);
+    }
   }
 
-  private swap(first: number, second: number) {
-    const temp = this.items[first];
-    this.items[first] = this.items[second];
-    this.items[second] = temp;
+  private parent(idx: number) {
+    return Math.floor((idx - 1) / 2);
   }
 
-  isFull() {
-    return this.size === this.items.length;
+  private childLeft(idx: number): number {
+    return 2 * idx + 1;
   }
 
-  isEmpty() {
-    return this.size === 0;
-  }
-
-  info() {
-    console.log(this.items.filter((_, index) => index < this.size));
-  }
-}
-
-class PriorityQueueWithHeap {
-  private heap: Heap = new Heap();
-
-  enqueue(value: number) {
-    this.heap.insert(value);
-  }
-
-  dequeue() {
-    return this.heap.remove();
+  private childRight(idx: number): number {
+    return 2 * idx + 2;
   }
 }
-
-const heapify = (arr: number[], index: number) => {
-  console.log(arr);
-  let largerIndex = index;
-
-  const leftIndex = index * 2 + 1;
-  if (leftIndex < arr.length && arr[leftIndex] > arr[largerIndex]) {
-    largerIndex = leftIndex;
-  }
-
-  const rightIndex = index * 2 + 2;
-  if (rightIndex < arr.length && arr[rightIndex] > arr[largerIndex]) {
-    largerIndex = rightIndex;
-  }
-
-  if (largerIndex === index) return;
-
-  const temp = arr[index];
-  arr[index] = arr[largerIndex];
-  arr[largerIndex] = temp;
-
-  heapify(arr, largerIndex);
-};
-
-const runHeap = () => {
-  let arr = [4, 5, 3, 10, 1, 4, 2, 1];
-  const heap = new Heap();
-
-  arr.forEach((value) => heap.insert(value));
-  heap.info();
-
-  // for (let index = 0; index < arr.length; index++) {
-  //   arr[index] = heap.remove();
-  // }
-
-  for (let index = arr.length - 1; index >= 0; index--) {
-    arr[index] = heap.remove();
-  }
-
-  const heapifyArr = [5, 3, 8, 4, 1, 2];
-  for (let i = 0; i < heapifyArr.length; i++) {
-    heapify(heapifyArr, i);
-  }
-
-  console.log(heapifyArr);
-};
-
-runHeap();
