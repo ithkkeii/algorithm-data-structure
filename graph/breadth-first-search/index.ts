@@ -1,4 +1,4 @@
-type WeightedAdjacencyMatrix = number[][];
+export type WeightedAdjacencyMatrix = number[][];
 
 export const bfs = (
   graph: WeightedAdjacencyMatrix,
